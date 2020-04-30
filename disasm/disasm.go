@@ -340,15 +340,15 @@ func NewDisassembly(fn wasm.Function, module *wasm.Module) (*Disassembly, error)
 	return disas, nil
 }
 
-// Disassemble disassembles a given function body into a set of instructions. It won't check operations for validity.
+//Disassemble disassembles a given function body into a set of instructions. It won't check operations for validity.
 func Disassemble(code []byte) ([]Instr, error) {
 	var out []Instr
 	var gasStack Stack
 	var posStack Stack
 	paramInstr := newInstr(0x41,"i32.const")
-	paramInstr.Immediates = append(paramInstr.Immediates, int32(0))
+	//paramInstr.Immediates = append(paramInstr.Immediates, int32(0))
 	gasInstr := newInstr(0x10,"call")
-	gasInstr.Immediates = append(gasInstr.Immediates, uint32(0))
+	//gasInstr.Immediates = append(gasInstr.Immediates, uint32(0))
 	out = append(out, paramInstr, gasInstr)
 	gasStack.push(0)
 	posStack.push(0)
@@ -515,10 +515,14 @@ func Disassemble(code []byte) ([]Instr, error) {
 			gas := gasStack.pop()
 			pos := posStack.pop()
 			fixIm(out, pos, gas)
-			//gasStack.push(0)
 			out = append(out, instr)
+			out = append(out, paramInstr, gasInstr)
+			gasStack.push(0)
+			posStack.push(int32(len(out)) - 2)
 		case ops.End:
-			//gasStack.pop()
+			gas := gasStack.pop()
+			pos := posStack.pop()
+			fixIm(out, pos, gas)
 			out = append(out, instr)
 		default:
 			gasStack.topAdd()
@@ -545,6 +549,9 @@ func newInstr(code byte, name string) Instr{
 }
 
 func fixIm(out []Instr, pos, im int32) {
+	if len(out[pos].Immediates) > 0 {
+		panic("fix error")
+	}
 	out[pos].Immediates = []interface{}{im}
 }
 
@@ -581,7 +588,7 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 	var gasStack Stack
 	var posStack Stack
 	paramInstr := newInstr(0x41,"i32.const")
-	paramInstr.Immediates = append(paramInstr.Immediates, int32(0))
+	//paramInstr.Immediates = append(paramInstr.Immediates, int32(0))
 	gasInstr := newInstr(0x10,"call")
 	gasInstr.Immediates = append(gasInstr.Immediates, uint32(pos))
 	out = append(out, paramInstr, gasInstr)
@@ -750,10 +757,14 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 			gas := gasStack.pop()
 			pos := posStack.pop()
 			fixIm(out, pos, gas)
-			//gasStack.push(0)
 			out = append(out, instr)
+			out = append(out, paramInstr, gasInstr)
+			gasStack.push(0)
+			posStack.push(int32(len(out)) - 2)
 		case ops.End:
-			//gasStack.pop()
+			gas := gasStack.pop()
+			pos := posStack.pop()
+			fixIm(out, pos, gas)
 			out = append(out, instr)
 		default:
 			gasStack.topAdd()

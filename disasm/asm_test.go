@@ -61,7 +61,7 @@ func TestAssemble(t *testing.T) {
 }
 
 func TestAddgas(t *testing.T) {
-	name := filepath.Join("../wasm/testdata","addgasnoe.wasm")
+	name := filepath.Join("../wasm/testdata","rust_sdk.wasm")
 	raw, err := ioutil.ReadFile(name)
 	if err != nil {
 		t.Fatal(err)
@@ -93,7 +93,7 @@ func TestAddgas(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error writing module %v", err)
 	}
-	err = ioutil.WriteFile("../wasm/testdata/addgasednoe2.wasm",buf.Bytes(),0644)
+	err = ioutil.WriteFile("../wasm/testdata/rust_sdk2.wasm",buf.Bytes(),0644)
 	if err != nil {
 		t.Fatalf("error writing file %v", err)
 	}
