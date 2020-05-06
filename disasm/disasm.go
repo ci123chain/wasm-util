@@ -342,24 +342,11 @@ func NewDisassembly(fn wasm.Function, module *wasm.Module) (*Disassembly, error)
 
 //Disassemble disassembles a given function body into a set of instructions. It won't check operations for validity.
 func Disassemble(code []byte) ([]Instr, error) {
-	var out []Instr
-	var gasStack Stack
-	var posStack Stack
-	paramInstr := newInstr(0x41,"i32.const")
-	//paramInstr.Immediates = append(paramInstr.Immediates, int32(0))
-	gasInstr := newInstr(0x10,"call")
-	//gasInstr.Immediates = append(gasInstr.Immediates, uint32(0))
-	out = append(out, paramInstr, gasInstr)
-	gasStack.push(0)
-	posStack.push(0)
-
 	reader := bytes.NewReader(code)
+	var out []Instr
 	for {
 		op, err := reader.ReadByte()
 		if err == io.EOF {
-			gas := gasStack.pop()
-			pos := posStack.pop()
-			fixIm(out, pos, gas)
 			break
 		} else if err != nil {
 			return nil, err
@@ -369,7 +356,6 @@ func Disassemble(code []byte) ([]Instr, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		instr := Instr{
 			Op: opStr,
 		}
@@ -381,30 +367,12 @@ func Disassemble(code []byte) ([]Instr, error) {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, wasm.BlockType(sig))
-			out = append(out, instr)
-			out = append(out, paramInstr, gasInstr)
-			gasStack.push(0)
-			posStack.push(int32(len(out)) - 2)
-		case ops.BrIf:
+		case ops.Br, ops.BrIf:
 			depth, err := leb128.ReadVarUint32(reader)
 			if err != nil {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, depth)
-			gas := gasStack.pop()
-			pos := posStack.pop()
-			fixIm(out, pos, gas)
-			out = append(out, instr)
-			out = append(out, paramInstr, gasInstr)
-			gasStack.push(0)
-			posStack.push(int32(len(out)) - 2)
-		case ops.Br:
-			depth, err := leb128.ReadVarUint32(reader)
-			if err != nil {
-				return nil, err
-			}
-			instr.Immediates = append(instr.Immediates, depth)
-			out = append(out, instr)
 		case ops.BrTable:
 			targetCount, err := leb128.ReadVarUint32(reader)
 			if err != nil {
@@ -418,13 +386,12 @@ func Disassemble(code []byte) ([]Instr, error) {
 				}
 				instr.Immediates = append(instr.Immediates, entry)
 			}
+
 			defaultTarget, err := leb128.ReadVarUint32(reader)
 			if err != nil {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, defaultTarget)
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.Call, ops.CallIndirect:
 			index, err := leb128.ReadVarUint32(reader)
 			if err != nil {
@@ -441,32 +408,24 @@ func Disassemble(code []byte) ([]Instr, error) {
 				}
 				instr.Immediates = append(instr.Immediates, uint32(idx))
 			}
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.GetLocal, ops.SetLocal, ops.TeeLocal, ops.GetGlobal, ops.SetGlobal:
 			index, err := leb128.ReadVarUint32(reader)
 			if err != nil {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, index)
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.I32Const:
 			i, err := leb128.ReadVarint32(reader)
 			if err != nil {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, i)
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.I64Const:
 			i, err := leb128.ReadVarint64(reader)
 			if err != nil {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, i)
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.F32Const:
 			var b [4]byte
 			if _, err := io.ReadFull(reader, b[:]); err != nil {
@@ -474,8 +433,6 @@ func Disassemble(code []byte) ([]Instr, error) {
 			}
 			i := binary.LittleEndian.Uint32(b[:])
 			instr.Immediates = append(instr.Immediates, math.Float32frombits(i))
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.F64Const:
 			var b [8]byte
 			if _, err := io.ReadFull(reader, b[:]); err != nil {
@@ -483,8 +440,6 @@ func Disassemble(code []byte) ([]Instr, error) {
 			}
 			i := binary.LittleEndian.Uint64(b[:])
 			instr.Immediates = append(instr.Immediates, math.Float64frombits(i))
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.I32Load, ops.I64Load, ops.F32Load, ops.F64Load, ops.I32Load8s, ops.I32Load8u, ops.I32Load16s, ops.I32Load16u, ops.I64Load8s, ops.I64Load8u, ops.I64Load16s, ops.I64Load16u, ops.I64Load32s, ops.I64Load32u, ops.I32Store, ops.I64Store, ops.F32Store, ops.F64Store, ops.I32Store8, ops.I32Store16, ops.I64Store8, ops.I64Store16, ops.I64Store32:
 			// read memory_immediate
 			align, err := leb128.ReadVarUint32(reader)
@@ -498,8 +453,6 @@ func Disassemble(code []byte) ([]Instr, error) {
 				return nil, err
 			}
 			instr.Immediates = append(instr.Immediates, offset)
-			gasStack.topAdd()
-			out = append(out, instr)
 		case ops.CurrentMemory, ops.GrowMemory:
 			idx, err := wasm.ReadByte(reader)
 			if err != nil {
@@ -509,25 +462,8 @@ func Disassemble(code []byte) ([]Instr, error) {
 				return nil, errors.New("disasm: memory index must be 0")
 			}
 			instr.Immediates = append(instr.Immediates, uint8(idx))
-			gasStack.topAdd()
-			out = append(out, instr)
-		case ops.Return:
-			gas := gasStack.pop()
-			pos := posStack.pop()
-			fixIm(out, pos, gas)
-			out = append(out, instr)
-			out = append(out, paramInstr, gasInstr)
-			gasStack.push(0)
-			posStack.push(int32(len(out)) - 2)
-		case ops.End:
-			gas := gasStack.pop()
-			pos := posStack.pop()
-			fixIm(out, pos, gas)
-			out = append(out, instr)
-		default:
-			gasStack.topAdd()
-			out = append(out, instr)
 		}
+		out = append(out, instr)
 	}
 	return out, nil
 }

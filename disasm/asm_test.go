@@ -90,10 +90,14 @@ func TestAddgas(t *testing.T) {
 
 	buf := new(bytes.Buffer)
 	err = wasm.EncodeModule(buf, m)
+
+	m, err = wasm.DecodeModule(bytes.NewReader(buf.Bytes()))
+
+
 	if err != nil {
 		t.Fatalf("error writing module %v", err)
 	}
-	err = ioutil.WriteFile("../wasm/testdata/rust_sdk2.wasm",buf.Bytes(),0644)
+	err = ioutil.WriteFile("../wasm/testdata/rust_sdk3.wasm",buf.Bytes(),0644)
 	if err != nil {
 		t.Fatalf("error writing file %v", err)
 	}

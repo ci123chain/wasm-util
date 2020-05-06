@@ -166,7 +166,7 @@ func DecodeModuleAddGas(r io.Reader) (*Module, int, error) {
 	var tPos int
 	if m.Types != nil {
 		for k,v := range m.Types.Entries{
-			if v.ParamTypes[0] == ValueTypeI32 && len(v.ReturnTypes) == 0{
+			if len(v.ParamTypes) == 1 && v.ParamTypes[0] == ValueTypeI32 && len(v.ReturnTypes) == 0{
 				hasType = true
 				tPos = k
 				break
@@ -227,6 +227,10 @@ func DecodeModuleAddGas(r io.Reader) (*Module, int, error) {
 		mp[k] = v
 	}
 	m.Export.Entries = mp
+
+	for i := 0; i < len(m.Elements.Entries[0].Elems); i++ {
+		m.Elements.Entries[0].Elems[i]++
+	}
 	return m, len(m.Import.Entries) - 1, nil
 }
 
