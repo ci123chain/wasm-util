@@ -160,7 +160,6 @@ func DecodeModuleAddGas(r io.Reader) (*Module, int, error) {
 		return nil, 0, err
 	}
 
-
 	//判断type是否存在
 	hasType := false
 	var tPos int
@@ -228,9 +227,12 @@ func DecodeModuleAddGas(r io.Reader) (*Module, int, error) {
 	}
 	m.Export.Entries = mp
 
-	for i := 0; i < len(m.Elements.Entries[0].Elems); i++ {
-		m.Elements.Entries[0].Elems[i]++
+	if m.Elements != nil {
+		for i := 0; i < len(m.Elements.Entries[0].Elems); i++ {
+			m.Elements.Entries[0].Elems[i]++
+		}
 	}
+
 	return m, len(m.Import.Entries) - 1, nil
 }
 

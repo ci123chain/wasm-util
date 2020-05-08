@@ -608,6 +608,9 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 			if err != nil {
 				return nil, err
 			}
+			if op == ops.Call && int(index) > pos {
+				index ++
+			}
 			instr.Immediates = append(instr.Immediates, index)
 			if op == ops.CallIndirect {
 				idx, err := wasm.ReadByte(reader)
