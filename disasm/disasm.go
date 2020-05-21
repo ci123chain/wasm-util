@@ -12,10 +12,9 @@ import (
 	"io"
 	"math"
 
-	"github.com/go-interpreter/wagon/internal/stack"
-	"github.com/go-interpreter/wagon/wasm"
-	"github.com/go-interpreter/wagon/wasm/leb128"
-	ops "github.com/go-interpreter/wagon/wasm/operators"
+	"github.com/ci123chain/wasm-util/wasm"
+	"github.com/ci123chain/wasm-util/wasm/leb128"
+	ops "github.com/ci123chain/wasm-util/wasm/operators"
 )
 
 // Instr describes an instruction, consisting of an operator, with its

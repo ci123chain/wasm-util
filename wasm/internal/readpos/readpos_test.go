@@ -9,7 +9,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/go-interpreter/wagon/wasm/internal/readpos"
+	"github.com/ci123chain/wasm-util/wasm/internal/readpos"
 )
 
 func TestRead(t *testing.T) {

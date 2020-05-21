@@ -11,9 +11,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-interpreter/wagon/wasm"
-	"github.com/go-interpreter/wagon/wasm/leb128"
-	ops "github.com/go-interpreter/wagon/wasm/operators"
+	"github.com/ci123chain/wasm-util/wasm"
+	"github.com/ci123chain/wasm-util/wasm/leb128"
+	ops "github.com/ci123chain/wasm-util/wasm/operators"
 )
 
 // mockVM is a minimal implementation of a virtual machine to

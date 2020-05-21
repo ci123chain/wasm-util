@@ -10,7 +10,7 @@ import (
 	"io"
 	"math"
 
-	"github.com/go-interpreter/wagon/wasm/leb128"
+	"github.com/ci123chain/wasm-util/wasm/leb128"
 )
 
 type Marshaler interface {

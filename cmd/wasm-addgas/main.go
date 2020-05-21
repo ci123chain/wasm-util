@@ -3,10 +3,10 @@ package main
 import (
 	"bytes"
 	"flag"
-	"github.com/go-interpreter/wagon/disasm"
-	"github.com/go-interpreter/wagon/wasm"
 	"io/ioutil"
 	"log"
+	"github.com/ci123chain/wasm-util/wasm"
+	"github.com/ci123chain/wasm-util/disasm"
 )
 
 func main() {

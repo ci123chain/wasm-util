@@ -12,10 +12,10 @@ import (
 	"io"
 	"math"
 
-	"github.com/go-interpreter/wagon/disasm"
-	"github.com/go-interpreter/wagon/exec/internal/compile"
-	"github.com/go-interpreter/wagon/wasm"
-	ops "github.com/go-interpreter/wagon/wasm/operators"
+	"github.com/ci123chain/wasm-util/disasm"
+	"github.com/ci123chain/wasm-util/exec/internal/compile"
+	"github.com/ci123chain/wasm-util/wasm"
+	ops "github.com/ci123chain/wasm-util/wasm/operators"
 )
 
 var (

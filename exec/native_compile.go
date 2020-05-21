@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/go-interpreter/wagon/exec/internal/compile"
-	ops "github.com/go-interpreter/wagon/wasm/operators"
+	"github.com/ci123chain/wasm-util/exec/internal/compile"
+	ops "github.com/ci123chain/wasm-util/wasm/operators"
 )
 
 // Parameters that decide whether a sequence should be compiled.

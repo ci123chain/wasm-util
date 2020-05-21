@@ -14,9 +14,9 @@ import (
 	"os"
 	"sort"
 
-	"github.com/go-interpreter/wagon/disasm"
-	"github.com/go-interpreter/wagon/wasm"
-	"github.com/go-interpreter/wagon/wasm/leb128"
+	"github.com/ci123chain/wasm-util/disasm"
+	"github.com/ci123chain/wasm-util/wasm"
+	"github.com/ci123chain/wasm-util/wasm/leb128"
 )
 
 // TODO: track the number of imported funcs,memories,tables and globals to adjust

@@ -14,7 +14,7 @@ import (
 	"testing"
 	"unsafe"
 
-	ops "github.com/go-interpreter/wagon/wasm/operators"
+	ops "github.com/ci123chain/wasm-util/wasm/operators"
 	asm "github.com/twitchyliquid64/golang-asm"
 	"github.com/twitchyliquid64/golang-asm/obj"
 	"github.com/twitchyliquid64/golang-asm/obj/x86"

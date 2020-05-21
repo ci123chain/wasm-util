@@ -14,7 +14,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/go-interpreter/wagon/wasm"
+	"github.com/ci123chain/wasm-util/wasm"
 )
 
 type Scanner struct {

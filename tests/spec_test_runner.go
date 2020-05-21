@@ -13,8 +13,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/go-interpreter/wagon/exec"
-	"github.com/go-interpreter/wagon/wasm"
+	"github.com/ci123chain/wasm-util/exec"
+	"github.com/ci123chain/wasm-util/wasm"
 )
 
 // this file is based on github.com/perlin-network/life/spec/test_runner/runner.go
