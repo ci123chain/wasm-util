@@ -12,6 +12,7 @@ import (
 	"io"
 	"math"
 
+	"github.com/ci123chain/wasm-util/internal/stack"
 	"github.com/ci123chain/wasm-util/wasm"
 	"github.com/ci123chain/wasm-util/wasm/leb128"
 	ops "github.com/ci123chain/wasm-util/wasm/operators"
@@ -607,7 +608,7 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 			if err != nil {
 				return nil, err
 			}
-			if op == ops.Call && int(index) > pos {
+			if op == ops.Call && int(index) >= pos {
 				index ++
 			}
 			instr.Immediates = append(instr.Immediates, index)
