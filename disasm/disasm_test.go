@@ -46,37 +46,3 @@ func TestDisassemble(t *testing.T) {
 		}
 	}
 }
-
-func TestDis(t *testing.T) {
-	name := "../wasm/testdata/addgas.wasm"
-	t.Run(filepath.Base(name), func(t *testing.T) {
-		raw, err := ioutil.ReadFile(name)
-		if err != nil {
-			t.Fatal(err)
-		}
-		r := bytes.NewReader(raw)
-		m, err := wasm.ReadModule(r, nil)
-		if err != nil {
-			t.Fatalf("error reading module %v", err)
-		}
-		for _, f := range m.FunctionIndexSpace {
-			a, err := disasm.NewDisassembly(f, m)
-			if err != nil {
-				t.Fatalf("disassemble failed: %v", err)
-			}
-			for _,v := range a.Code {
-				fmt.Println("Op:----------------------------")
-				fmt.Println(v.Op.Code)
-				fmt.Println(v.Op.Name)
-				fmt.Println(v.Op.Args)
-				fmt.Println(v.Op.Returns)
-				fmt.Println("Immediates:--------------------")
-				fmt.Println(v.Immediates)
-				fmt.Println("Block:--------------------")
-				fmt.Println(v.Block)
-				fmt.Println("===============================")
-			}
-		}
-	})
-}
-
