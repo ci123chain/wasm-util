@@ -563,7 +563,7 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 			out = append(out, paramInstr, gasInstr)
 			gasStack.push(0)
 			posStack.push(int32(len(out)) - 2)
-		case ops.BrIf:
+		case ops.Br, ops.BrIf:
 			depth, err := leb128.ReadVarUint32(reader)
 			if err != nil {
 				return nil, err
@@ -576,13 +576,6 @@ func DisassembleAddGas(code []byte, pos int) ([]Instr, error) {
 			out = append(out, paramInstr, gasInstr)
 			gasStack.push(0)
 			posStack.push(int32(len(out)) - 2)
-		case ops.Br:
-			depth, err := leb128.ReadVarUint32(reader)
-			if err != nil {
-				return nil, err
-			}
-			instr.Immediates = append(instr.Immediates, depth)
-			out = append(out, instr)
 		case ops.BrTable:
 			targetCount, err := leb128.ReadVarUint32(reader)
 			if err != nil {
